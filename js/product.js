@@ -94,18 +94,31 @@ Cette récupération se fera au moment où le visiteur clique sur "commander"
 avec un eventListener sur le button id addToCart
 
 */
+console.log(localStorage);
+
+const monStockageJSON = localStorage.getItem("obj");
+const monStockageJS = JSON.parse(monStockageJSON);
 
 
+if(monStockageJS){
+    if(monStockageJS.length === 0){
+        console.log("le panier est vide");
 
+    }else{
+        console.log('il y a qqchose dans le panier');
+        console.log(monStockageJSON);
+        console.log(monStockageJS);  
+        
+        for(let i=0; i<monStockageJS.length; i++){
+            console.log(monStockageJS[i].idt);
+        }
+        
+    }
+}else{
+    console.log('le localStorage est null');
 
-
-    console.log(localStorage);
-
-    console.log(localStorage.getItem("obj"));
-    const monStockageJSON = localStorage.getItem("obj");
-    const monStockageJS = JSON.parse(monStockageJSON);
-    
-    console.log(monStockageJS);
+}
+                
     /*
     for (let i=0; i<monStockageJS.length; i++){
     
@@ -140,8 +153,7 @@ document.getElementById("addToCart").addEventListener("click", function(){
     // ici on récupère la valeur couleur et la valeur nombre
 
     console.log(identifiant);
-    console.log(document.getElementById("colors").value);
-    
+    console.log(document.getElementById("colors").value); 
     console.log(document.getElementById("quantity").value);
 
     // il faut les stocker
@@ -158,18 +170,72 @@ document.getElementById("addToCart").addEventListener("click", function(){
 
     // On va boucler cet Objet (s'il existe)
 
-    /* if(identifiant ==== localStorage.idt && laCouleurSelect === localStorage.couleur){
+    if(leNombreSelect>0 && laCouleurSelect){    //on verifie qu'il y a au moins un canap et une couleur selectionnée
 
-        On déroule le code qui additionne dans le panier, et on va changer le nombre
-         affiché dans cart 
+        if(monStockageJS){
+            if(monStockageJS.length === 0){
+                console.log("le panier est vide");
 
-    }else{ */
-  
-        if(leNombreSelect>0 && laCouleurSelect){
+                monPanierTab= [
+                    {
+                    idt : leProduitSelect,
+                    nombre: leNombreSelect,
+                    couleur: laCouleurSelect
+                    }
+                ];    
+
+                // On transforme l'objet JS en objet JSON
+
+                let monPanierJSon = JSON.stringify(monPanierTab);
+
+                // On le stocke dans localStorage
+
+                localStorage.setItem("obj", monPanierJSon);
+        
+            }else{
+                console.log('il y a qqchose dans le panier');
+                console.log(monStockageJSON);
+                console.log(monStockageJS); 
+
+                let additionArticle = false;
+
+                // s'il y a déjà un canapé même couleur et même identifiant on ne fait qu'ajouter les nombres nouveau et anciens
+
+                // sinon on déroule le code où l'on ajoute un objet
+                for(let i=0; i<monStockageJS.length; i++){
+
+                    let idtAlready = monStockageJS[i].idt;
+                    let couleurAlready = monStockageJS[i].couleur;
+
+                    if(idtAlready === leProduitSelect && couleurAlready === laCouleurSelect){
+                        // code où l'on ajoute
+
+                        monStockageJS[i] = monStockageJS[i] + leNombreSelect;
+                        additionArticle = true;
+
+                    }else{
+                        console.log("non il n'y a pas eu de commande de canapé de ce type avant");
+                    }
+                }
+
+                if(additionArticle === false){
+                    monStockageJS.push( 
+                        {
+                        idt : leProduitSelect,
+                        nombre: leNombreSelect,
+                        couleur: laCouleurSelect
+                        }
+                    );
+
+                    let monPanierJSon = JSON.stringify(monStockageJS);
+                    localStorage.setItem("obj", monPanierJSon);
+                }
 
 
-            /* il va falloir aller scanner le panier et vérifier que l'identifiant ci-dessus n'est 
-            pas déjà dans le panier */
+            }
+
+        }else{
+            console.log('le localStorage est null');
 
             monPanierTab= [
                 {
@@ -186,12 +252,21 @@ document.getElementById("addToCart").addEventListener("click", function(){
             // On le stocke dans localStorage
 
             localStorage.setItem("obj", monPanierJSon);
-
-        }else{
-            console.log("choisissez la couleur et le nombre!!!");
+            
         }
-            //console.log(localStorage.getItem("obj"));  
-    //}
+
+    }else{
+        console.log("choisissez la couleur et le nombre!!!");
+    }
+
+        
+
+    /* if(identifiant ==== localStorage.idt && laCouleurSelect === localStorage.couleur){
+
+        On déroule le code qui additionne dans le panier, et on va changer le nombre
+         affiché dans cart 
+
+    }else{ */
 
 });
 

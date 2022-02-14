@@ -5,10 +5,24 @@ console.log(localStorage.getItem("obj"));
 const monStockageJSON = localStorage.getItem("obj");
 const monStockageJS = JSON.parse(monStockageJSON);
 
+console.log(monStockageJS);
 
-console.log("le produit avec l'identifiant "+ monStockageJS.idt + 
-" est commandé en "+ monStockageJS.nombre + " exemplaire avec la couleur "+ monStockageJS.couleur);
+console.log("le premier canape est "+ monStockageJS[0].idt+ " est de couleur "+ monStockageJS[0].couleur);
 
+// ici on tape le code pour monStockageJS[0];  on va les placer avec des textContent
+
+for(let i=1; i< monStockageJS.length; i++){
+
+    // là par contre on va devoir des éléments à la main
+
+    console.log("canapé : " + monStockageJS[i].idt);
+
+    let nouvelleCommandeElt = document.createElement('article');
+
+    document.getElementById('cart__items').appendChild(nouvelleCommandeElt);
+
+
+}
 
 /*
  Il y a déjà la couleur et le nombre que l'on peut installer
@@ -19,9 +33,9 @@ console.log("le produit avec l'identifiant "+ monStockageJS.idt +
 
 */
 
-document.querySelector(".cart__item__content__description>p").textContent = monStockageJS.couleur;
+document.querySelector(".cart__item__content__description > p").textContent = monStockageJS.couleur;
 
-document.querySelector(".cart__item__content__settings__quantity>input").value = monStockageJS.nombre;
+document.querySelector(".cart__item__content__settings__quantity > input").value = monStockageJS.nombre;
 
 /* J'ai bien récupéré un objet avec idt, nombre et couleur
 
@@ -48,11 +62,13 @@ fetch("http://localhost:3000/api/products")
 
         for(const element of tableauDatum){
 
-            if(element._id === monStockageJS.idt){
+            // on doit boucler sur le tableau d'objet
+
+            if(element._id === monStockageJS.idt){  
 
                 /* ici on place les éléments qui coincident avec l'identifiant  
-                l'image + le nom + le prix
-                */
+                l'image + le nom + le  prix */
+                
 
                 document.querySelector(".cart__item__img>img").src = element.imageUrl;
 
@@ -66,3 +82,5 @@ fetch("http://localhost:3000/api/products")
             }
         }
     })
+
+    
