@@ -18,11 +18,12 @@ document.querySelector(".cart__item__content__settings__quantity > input").value
 // maintenant qu'on a récupéré la couleur/ nombre
 // on va maintenant requêter l'API pour récupérer image/name/price avec l'idt comme point d'appui 
 
-//const tableauDatum = {};
+const tableauDatum = {};
 
 
+function requeterAPI(url, tableauVide){
 
-fetch("http://localhost:3000/api/products")
+    fetch(url)
 
     .then(function(res){
         if(res.ok){
@@ -32,9 +33,9 @@ fetch("http://localhost:3000/api/products")
 
     .then(function(value){
 
-        const tableauDatum = value;
+        tableauVide = value;
 
-        for(const element of tableauDatum){
+        for(const element of tableauVide){
 
             // on doit boucler sur le tableau d'objet
 
@@ -56,7 +57,45 @@ fetch("http://localhost:3000/api/products")
             }
         }
     })
+}
 
+requeterAPI("http://localhost:3000/api/products", tableauDatum);
+
+/*
+fetch("http://localhost:3000/api/products")
+
+    .then(function(res){
+        if(res.ok){
+            return res.json();
+        }
+    })
+
+    .then(function(value){
+
+        tableauDatum = value;
+
+        for(const element of tableauDatum){
+
+        
+
+            if(element._id === monStockageJS[0].idt){  
+
+                
+                
+
+                document.querySelector(".cart__item__img>img").src = element.imageUrl;
+
+                document.querySelector(".cart__item__content__description>h2").textContent = element.name;
+
+                document.querySelector(".cart__item__content__description>p+p").textContent = element.price + " €";
+
+
+            }else{
+                console.log("c'est pas lui!!!!");
+            }
+        }
+    })
+*/
 //----------------------------------------------------------------------------------------------
 
 // Cette partie concerne l'insertion des éventuels canapés supplémentaires du panier 
