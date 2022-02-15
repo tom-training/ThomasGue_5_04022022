@@ -11,42 +11,16 @@ console.log("le premier canape est "+ monStockageJS[0].idt+ " est de couleur "+ 
 
 // ici on tape le code pour monStockageJS[0];  on va les placer avec des textContent
 
-for(let i=1; i< monStockageJS.length; i++){
+document.querySelector(".cart__item__content__description > p").textContent = monStockageJS[0].couleur;
 
-    // là par contre on va devoir des éléments à la main
+document.querySelector(".cart__item__content__settings__quantity > input").value = monStockageJS[0].nombre;
 
-    console.log("canapé : " + monStockageJS[i].idt);
+// maintenant qu'on a récupéré la couleur/ nombre
+// on va maintenant requêter l'API pour récupérer image/name/price avec l'idt comme point d'appui 
 
-    let nouvelleCommandeElt = document.createElement('article');
-
-    document.getElementById('cart__items').appendChild(nouvelleCommandeElt);
+//const tableauDatum = {};
 
 
-}
-
-/*
- Il y a déjà la couleur et le nombre que l'on peut installer
-
-            cart__item__content__description > p    <----  monStockageJS.couleur    
-
-            cart__item__content__settings__quantity > p  <--- monStockageJS.nombre
-
-*/
-
-document.querySelector(".cart__item__content__description > p").textContent = monStockageJS.couleur;
-
-document.querySelector(".cart__item__content__settings__quantity > input").value = monStockageJS.nombre;
-
-/* J'ai bien récupéré un objet avec idt, nombre et couleur
-
-    l'identifiant va me permettre d'aller requêter l'API pour récupérer 
-
-    l'image     element.imageUrl        --->querySelector cart__item__img >img
-
-    nom du produit      element.name    ---> cart_item_content_description > h2
-
-    prix du produit     element.price   ----> cart_item_content_description > p + p
-*/
 
 fetch("http://localhost:3000/api/products")
 
@@ -64,7 +38,7 @@ fetch("http://localhost:3000/api/products")
 
             // on doit boucler sur le tableau d'objet
 
-            if(element._id === monStockageJS.idt){  
+            if(element._id === monStockageJS[0].idt){  
 
                 /* ici on place les éléments qui coincident avec l'identifiant  
                 l'image + le nom + le  prix */
@@ -82,5 +56,26 @@ fetch("http://localhost:3000/api/products")
             }
         }
     })
+
+//----------------------------------------------------------------------------------------------
+
+// Cette partie concerne l'insertion des éventuels canapés supplémentaires du panier 
+// là par contre on va devoir insérer des éléments à la main
+/*
+for(let i=1; i< monStockageJS.length; i++){
+
+    console.log("canapé : " + monStockageJS[i].idt);
+
+    let nouvelleCommandeElt = document.createElement('article');
+
+    document.getElementById('cart__items').appendChild(nouvelleCommandeElt);
+
+}
+*/
+
+
+
+
+
 
     
