@@ -28,7 +28,7 @@ function requeterAPI(url, tableauVide, monStock){
 
                 /* ici on place les éléments qui coincident avec l'identifiant  
                 l'image + le nom + le  prix */
-                console.log("yes le vla!!");                
+                console.log("c'est lui");                
 
                 document.querySelector(".cart__item__img>img").src = element.imageUrl;
 
@@ -38,10 +38,10 @@ function requeterAPI(url, tableauVide, monStock){
 
 
             }else{
-                console.log("Non Non Non , c'est pas lui!!!!");
+                console.log("Non , c'est pas lui!");
             }
         }
-    })
+    });
 }
 
 
@@ -99,85 +99,58 @@ if(monStockageJS){
 
             document.getElementById("cart__items").appendChild(articleElt);
 
-            articleElt.class = "cart__item";
-
-            articleElt.id = monStockageJS.idt; // variable idt
-
             //articleElt.style.color = monStockageJS.couleur;
             
             // dans l'innerHTML ci-dessous sont insérées les variables couleur et nombre
 
-            var tableauData ={};            
+            var tableauData ={};
 
-            fetch("http://localhost:3000/api/products")
+            fetch("http://localhost:3000/api/products/"+ monStockageJS[i].idt)
 
-            .then(function(res){
-                if(res.ok){
-                    return res.json();
-                }
-            })
-
-            .then(function(value){
-
-                tableauData = value;
-
-                articleElt.innerHTML = `
-    
-                <div class="cart__item__img">
-                    <img src="" alt="">
-                </div>
-      
-                <div class="cart__item__content">
-      
-                    <div class="cart__item__content__description">
-    
-                        <h2>Nom du produit</h2>
-        
-                        <p>${monStockageJS[i].couleur}</p>
-        
-                        <p>42,00 €</p>
-    
-                    </div>
-      
-                    <div class="cart__item__content__settings">
-                        <div class="cart__item__content__settings__quantity">
-                            <p>Qté : </p>
-            
-                            <input type="number" class="itemQuantity" name="itemQuantity" 
-                            min="1" max="100" value="${monStockageJS[i].nombre}">
-    
-                        </div>
-                        <div class="cart__item__content__settings__delete">
-                            <p class="deleteItem">Supprimer</p>
-                        </div>
-                    </div>
-      
-                </div>
-        
-                `;
-
-                for(const element of tableauData){
-
-                    // on doit boucler sur le tableau d'objet
-
-                    if(element._id === monStockageJS[i].idt){  
-
-                        /* ici on place les éléments qui coincident avec l'identifiant  
-                        l'image + le nom + le  prix */
-                        console.log("En vla un !!!");
-
-                        document.querySelector(".cart__item__img>img").src = element.imageUrl;
-
-                        document.querySelector(".cart__item__content__description>h2").textContent = element.name;
-
-                        document.querySelector(".cart__item__content__description>p+p").textContent = element.price + " €";
-
-
-                    }else{
-                        console.log("c'est pas lui!!!!");
+                .then(function(res){
+                    if(res.ok){
+                        return res.json();
                     }
-                }
-            })
+                })
+
+                .then(function(value){
+
+                    tableauData = value;
+                    // du coup on retire le for car 
+                    for(const element of tableauData){
+
+                        // on doit boucler sur le tableau d'objet
+
+                        if(element._id === monStockageJS[i].idt){  
+
+                            /* ici on place les éléments qui coincident avec l'identifiant  
+                            l'image + le nom + le  prix */
+                            console.log("C'en est un!");
+
+
+                            document.createElement("article")
+
+
+                            innerHTML=``
+
+
+
+                            document.querySelector(".cart__item__img>img").src = element.imageUrl;
+
+                            document.querySelector(".cart__item__content__description>h2").textContent = element.name;
+
+                            document.querySelector(".cart__item__content__description>p+p").textContent = element.price + " €";
+
+
+                        }else{
+                            console.log("c'est pas lui!!!!");
+                        }
+                    }
+                })
+                .catch(function(error){console.log(error)});
+
+                // si le back tombe en panne, il 
+                // dsl probleme technique, nous empeche de récupérer les canapés
 
         }
 
