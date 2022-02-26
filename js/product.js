@@ -63,7 +63,6 @@ fetch("http://localhost:3000/api/products")
 
                 for(const couleur of element.colors){
                     //console.log(couleur);
-
                     const couleurOption = document.createElement("option");
                     couleurOption.value = couleur;
                     couleurOption.textContent = couleur;
@@ -230,8 +229,6 @@ document.getElementById("addToCart").addEventListener("click", function(){
                     let monPanierJSon = JSON.stringify(monStockageJS);
                     localStorage.setItem("obj", monPanierJSon);
                 }
-
-
             }
 
         }else{
@@ -257,9 +254,7 @@ document.getElementById("addToCart").addEventListener("click", function(){
 
     }else{
         console.log("choisissez la couleur et le nombre!!!");
-    }
-
-        
+    }       
 
     /* if(identifiant ==== localStorage.idt && laCouleurSelect === localStorage.couleur){
 
