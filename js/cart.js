@@ -304,7 +304,7 @@ async function loadFinalTableau(url){
                 }
 
                 faireLeTotal();
-                
+
             });
         
         }
@@ -319,21 +319,50 @@ async function loadFinalTableau(url){
 
 loadFinalTableau("http://localhost:3000/api/products");
 
-//   Ci-dessous on va travailler sur la suppression d'un canapé, choix 
+// Travail sur la validation des champs du formulaire
 
-/* 
-    EVENTListener sur querySelector .deleteItem    MAIS il va falloir utiliser 
+document.getElementById("firstName").addEventListener("focus", function () {
+    document.getElementById("firstNameErrorMsg").textContent = "Entrez votre prénom";
+});
 
-    la callback du querySelector va impacter le  
+let regexPrenom = /[a-zA-Z]+/;
 
-    listProdCommandes      ou le vaChercherTab   / le DOM  / le localStorage
+document.getElementById("firstName").addEventListener("blur", function (e) {
 
-    Element.closest 
+    let validitePrenom = "";
+
+    if(!regexPrenom.test(e.target.value)){
+        validitePrenom = "veuillez nous laisser votre prénom!"
+    }
+
+    document.getElementById("firstNameErrorMsg").textContent = validitePrenom;
+
+});
 
 
+// Vérification de la longueur du mot de passe saisi
+document.getElementById("firstName").addEventListener("input", function (e) {
+    let prenomSaisie = e.target.value; 
+    
+    let aidePrenom = document.getElementById("firstNameErrorMsg");
+    aidePrenom.textContent = "vous avez tapé : " + prenomSaisie; 
+    
+});
 
-*/
 
+// REGEX
 
+let regexEmail = /.+@.+\..+/;
 
+const verifEmail = document.getElementById("email");
 
+verifEmail.addEventListener("blur", function(e){
+
+    let validiteCourriel = " ";
+
+    if(!regexEmail.test(e.target.value)){
+        validiteCourriel = "votre email ne semble pas valide!"
+    }
+
+    document.getElementById("emailErrorMsg").textContent = validiteCourriel;
+});
