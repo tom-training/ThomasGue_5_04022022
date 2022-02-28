@@ -192,8 +192,6 @@ function ajouterArticle(objKanap){
 
 } 
 
-// on va créer une fonction calculTotal
-
 async function loadFinalTableau(url){
 
     try{
@@ -211,20 +209,20 @@ async function loadFinalTableau(url){
         console.log(vaChercherTab);
         // le code pour additionner le coût total
 
-        let total = 0;
-        let totalQuantity = 0; 
-        for(let kanap of vaChercherTab){
-
-            let leNombre = parseInt(kanap.nombre);
-            total = total + leNombre * kanap.price;
-            totalQuantity = totalQuantity + leNombre;
+        function faireLeTotal(){
+            let total = 0;
+            let totalQuantity = 0; 
+            for(let kanap of vaChercherTab){
+    
+                let leNombre = parseInt(kanap.nombre);
+                total = total + leNombre * kanap.price;
+                totalQuantity = totalQuantity + leNombre;
+            }
+            console.log(total); 
+    
+            document.getElementById("totalPrice").textContent = total;
+            document.getElementById("totalQuantity").textContent = totalQuantity;
         }
-        console.log(total); 
-
-        document.getElementById("totalPrice").textContent = total;
-        document.getElementById("totalQuantity").textContent = totalQuantity;
-        
-        // FIN DE MA FONCTION TOTAL
 
         // Ci-dessous le code pour supprimmer (delete) les canapés
 
@@ -271,6 +269,8 @@ async function loadFinalTableau(url){
                     }
                 }
 
+                faireLeTotal();
+
             });
         }
 
@@ -303,11 +303,13 @@ async function loadFinalTableau(url){
                     }
                 }
 
+                faireLeTotal();
+                
             });
         
         }
 
-        
+        faireLeTotal();
 
 
     }catch(error){
