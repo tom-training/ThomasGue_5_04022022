@@ -146,7 +146,7 @@ function ajouterArticle(objKanap){
     divContentDescrElt.appendChild(couleurElt);
 
     const prixElt = document.createElement("p");
-    prixElt.textContent = objKanap.price;
+    prixElt.textContent = objKanap.price + " €";
     divContentDescrElt.appendChild(prixElt);
 
     const divContentSettingsElt = document.createElement("div");
@@ -192,6 +192,8 @@ function ajouterArticle(objKanap){
 
 } 
 
+// on va créer une fonction calculTotal
+
 async function loadFinalTableau(url){
 
     try{
@@ -205,6 +207,26 @@ async function loadFinalTableau(url){
         for (let kanap of vaChercherTab){
             ajouterArticle(kanap);
         }
+        // MA FONCTION TOTAL
+        console.log(vaChercherTab);
+        // le code pour additionner le coût total
+
+        let total = 0;
+        let totalQuantity = 0; 
+        for(let kanap of vaChercherTab){
+
+            let leNombre = parseInt(kanap.nombre);
+            total = total + leNombre * kanap.price;
+            totalQuantity = totalQuantity + leNombre;
+        }
+        console.log(total); 
+
+        document.getElementById("totalPrice").textContent = total;
+        document.getElementById("totalQuantity").textContent = totalQuantity;
+        
+        // FIN DE MA FONCTION TOTAL
+
+        // Ci-dessous le code pour supprimmer (delete) les canapés
 
         const lesBoutonsDelete = document.querySelectorAll(".deleteItem")
         
@@ -228,11 +250,19 @@ async function loadFinalTableau(url){
 
                         // expulsion du i.idt du tableau d'objet
 
+                        let articleToSuppress = document.getElementById(monStockageJS[i].idt);
+                        console.log(articleToSuppress);
+                        document.getElementById("cart__items").removeChild(articleToSuppress);
+
                         console.log(monStockageJS.splice(i, 1));
 
-                        console.log(e.target.closest("article").dataset.id);
+                        // maintenant il faut transformer le localStorage
 
-                        console.log(monStockageJS);
+                        const monStokageJSON = JSON.stringify(monStockageJS);
+                        
+                        localStorage.setItem("obj", monStokageJSON);
+                        
+                        console.log(localStorage);
 
                     }else{
 
@@ -243,7 +273,43 @@ async function loadFinalTableau(url){
 
             });
         }
-       
+
+        // ci-dessous le code pour modifier le nombre de canapés
+
+        // on va utiliser l'élément de DOM suivant: input de type number "change"
+
+        const lesBoutonsModifs = document.querySelectorAll(".itemQuantity");
+        
+        for(let elts of lesBoutonsModifs){
+
+            elts.addEventListener("change", function(e){
+
+                console.log(e.target.value);
+
+                let nouveauNombre = e.target.value;
+
+                for(let i=0; i<monStockageJS.length; i++){
+
+                    if(monStockageJS[i].idt === e.target.closest("article").dataset.id){
+        
+                        monStockageJS[i].nombre = nouveauNombre;
+
+                        monStokageJSON = JSON.stringify(monStockageJS);
+                        
+                        localStorage.setItem("obj", monStokageJSON);
+                        
+                        console.log(localStorage);
+        
+                    }
+                }
+
+            });
+        
+        }
+
+        
+
+
     }catch(error){
         console.log(error);
     }
