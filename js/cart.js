@@ -80,7 +80,6 @@ const loadListProduct = async function(urll){
 
                         /* if structure, on boucle sur for(let el of listProdCommandes){
 
-
                         } */
 
                         listProdCommandes.push(
@@ -207,16 +206,66 @@ async function loadFinalTableau(url){
             ajouterArticle(kanap);
         }
 
+        const lesBoutonsDelete = document.querySelectorAll(".deleteItem")
+        
+        for (let elts of lesBoutonsDelete){
+
+            elts.addEventListener("click", function(e){
+
+                console.log(e.target.closest("article"));
+
+                console.log(e.target.closest("article").dataset.id);
+
+                console.log(e.target.closest("article").dataset.color);
+
+                // tu as récupéré l'identifiant et la couleur => tu supprimes dans le dataStorage
+
+                // tu supprimes dans le listProdCommandes
+
+                for(let i=0; i<monStockageJS.length; i++){
+
+                    if(monStockageJS[i].idt === e.target.closest("article").dataset.id){
+
+                        // expulsion du i.idt du tableau d'objet
+
+                        console.log(monStockageJS.splice(i, 1));
+
+                        console.log(e.target.closest("article").dataset.id);
+
+                        console.log(monStockageJS);
+
+                    }else{
+
+                        console.log("non c'est pas lui");
+                    
+                    }
+                }
+
+            });
+        }
+       
     }catch(error){
-
         console.log(error);
-
     }
-
 }
 
 loadFinalTableau("http://localhost:3000/api/products");
 
 //   Ci-dessous on va travailler sur la suppression d'un canapé, choix 
+
+/* 
+    EVENTListener sur querySelector .deleteItem    MAIS il va falloir utiliser 
+
+    la callback du querySelector va impacter le  
+
+    listProdCommandes      ou le vaChercherTab   / le DOM  / le localStorage
+
+    Element.closest 
+
+
+
+*/
+
+
 
 
