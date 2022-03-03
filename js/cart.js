@@ -3,13 +3,13 @@
 
 // D'abord on récupère du localStorage : un tableau d'objet 
 
-console.log(localStorage);
+//console.log(localStorage);
 
-console.log(localStorage.getItem("obj"));
+//console.log(localStorage.getItem("obj"));
 const monStockageJSON = localStorage.getItem("obj");
 const monStockageJS = JSON.parse(monStockageJSON);
 
-console.log(monStockageJS);
+//console.log(monStockageJS);
 
 // ensuite on a rédigé ici une fonction qui permet quand on l'appelle de récupérer 
 //toute les données de l'API
@@ -27,7 +27,7 @@ function requeterAPI(url, tableauVide){
     .then(function(value){
 
         tableauVide = value;
-        console.log(tableauVide);
+        //console.log(tableauVide);
         return tableauVide;
     })
     .catch(function(err){
@@ -61,20 +61,20 @@ const loadListProduct = async function(urll){
             let listProduct = await loadAPI(urll);
 
             listProduct.forEach(function(product) {
-            console.log(product.name);
+            //console.log(product.name);
             });
 
             let listProdCommandes= [];
 
             for(let element of monStockageJS){
                 
-                console.log(element.idt);
+                //console.log(element.idt);
 
-                for(let elt of listProduct){
+                for(let elt of listProduct){  // elt._id viennent de l'API donnant un tableau listProduct
 
-                    if(element.idt === elt._id){
+                    if(element.idt === elt._id){  //element.idt vient du tableau monStockageJS
 
-                        console.log(`c'est le produit ${elt.name} avec l'identifiant ${elt._id}`);
+                        //console.log(`c'est le produit ${elt.name} avec l'identifiant ${elt._id}`);
 
                         // le code pour insérer le produit
 
@@ -101,7 +101,7 @@ const loadListProduct = async function(urll){
                     }
                 }
             }
-            console.log(listProdCommandes);
+            //console.log(listProdCommandes);
             return listProdCommandes;
 
         }catch(error){
@@ -198,7 +198,7 @@ async function loadFinalTableau(url){
 
         const vaChercherTab = await loadListProduct(url);
 
-        console.log(vaChercherTab);
+        //console.log(vaChercherTab);
 
         //ici je vais insérer ma fonction de création d'élément de DOM
 
@@ -206,7 +206,7 @@ async function loadFinalTableau(url){
             ajouterArticle(kanap);
         }
         // MA FONCTION TOTAL
-        console.log(vaChercherTab);
+        //console.log(vaChercherTab);
         // le code pour additionner le coût total
 
         function faireLeTotal(){
@@ -218,7 +218,7 @@ async function loadFinalTableau(url){
                 total = total + leNombre * kanap.price;
                 totalQuantity = totalQuantity + leNombre;
             }
-            console.log(total); 
+            //console.log(total); 
     
             document.getElementById("totalPrice").textContent = total;
             document.getElementById("totalQuantity").textContent = totalQuantity;
@@ -232,11 +232,11 @@ async function loadFinalTableau(url){
 
             elts.addEventListener("click", function(e){
 
-                console.log(e.target.closest("article"));
+                //console.log(e.target.closest("article"));
 
-                console.log(e.target.closest("article").dataset.id);
+                //console.log(e.target.closest("article").dataset.id);
 
-                console.log(e.target.closest("article").dataset.color);
+                //console.log(e.target.closest("article").dataset.color);
 
                 // tu as récupéré l'identifiant et la couleur => tu supprimes dans le dataStorage
 
@@ -249,10 +249,11 @@ async function loadFinalTableau(url){
                         // expulsion du i.idt du tableau d'objet
 
                         let articleToSuppress = document.getElementById(monStockageJS[i].idt);
-                        console.log(articleToSuppress);
+                        //console.log(articleToSuppress);
                         document.getElementById("cart__items").removeChild(articleToSuppress);
 
-                        console.log(monStockageJS.splice(i, 1));
+                        monStockageJS.splice(i, 1);
+                        //console.log(monStockageJS.splice(i, 1));
 
                         // maintenant il faut transformer le localStorage
 
@@ -260,7 +261,7 @@ async function loadFinalTableau(url){
                         
                         localStorage.setItem("obj", monStokageJSON);
                         
-                        console.log(localStorage);
+                        //console.log(localStorage);
 
                     }else{
 
@@ -284,7 +285,7 @@ async function loadFinalTableau(url){
 
             elts.addEventListener("change", function(e){
 
-                console.log(e.target.value);
+                //console.log(e.target.value);
 
                 let nouveauNombre = e.target.value;
 
@@ -298,7 +299,7 @@ async function loadFinalTableau(url){
                         
                         localStorage.setItem("obj", monStokageJSON);
                         
-                        console.log(localStorage);
+                        //console.log(localStorage);
         
                     }
                 }
@@ -310,7 +311,6 @@ async function loadFinalTableau(url){
         }
 
         faireLeTotal();
-
 
     }catch(error){
         console.log(error);
@@ -325,22 +325,79 @@ document.getElementById("firstName").addEventListener("focus", function () {
     document.getElementById("firstNameErrorMsg").textContent = "Entrez votre prénom";
 });
 
+// CONTRÔLE CHAMP PRENOM
+
 let regexPrenom = /[a-zA-Z]+/;
+let alerteMsgPrenom = false;
 
 document.getElementById("firstName").addEventListener("blur", function (e) {
 
     let validitePrenom = "";
-
+    
     if(!regexPrenom.test(e.target.value)){
-        validitePrenom = "veuillez nous laisser votre prénom!"
+        validitePrenom = "veuillez nous laisser votre prénom!";
+        alerteMsgPrenom = true;
     }
 
     document.getElementById("firstNameErrorMsg").textContent = validitePrenom;
 
 });
 
+// CONTRÔLE CHAMP NOM
 
-// Vérification de la longueur du mot de passe saisi
+let regexNom = /[a-zA-Z]+/;
+let alerteMsgNom = false;
+
+document.getElementById("lastName").addEventListener("blur", function (e) {
+
+    let validiteNom = "";
+
+    if(!regexNom.test(e.target.value)){
+        validiteNom = "veuillez nous laisser votre nom de famille!";
+        alerteMsgNom = true;
+    }
+
+    document.getElementById("lastNameErrorMsg").textContent = validiteNom;
+
+});
+
+// CONTRÔLE CHAMP ADRESSE
+
+let regexAdresse = /[A-Za-z0-9]+/;
+let alerteMsgAdresse = false;
+
+document.getElementById("address").addEventListener("blur", function (e) {
+
+    let validiteAdresse = "";
+
+    if(!regexAdresse.test(e.target.value)){
+        validiteAdresse = "veuillez indiquer votre adresse!";
+        alerteMsgAdresse = true;
+    }
+
+    document.getElementById("addressErrorMsg").textContent = validiteAdresse;
+
+});
+
+// CONTRÔLE CHAMP VILLE
+
+let regexCity = /[a-zA-Z0-9]+/;
+let alerteMsgVille = false;
+
+document.getElementById("city").addEventListener("blur", function (e) {
+
+    let validiteVille = "";
+
+    if(!regexCity.test(e.target.value)){
+        validiteVille = "veuillez indiquer la ville de votre adresse";
+        alerteMsgVille = true;
+    }
+
+    document.getElementById("cityErrorMsg").textContent = validiteVille;
+
+});
+// Ce contrôle n'est PAS INDISPENSABLE
+
 document.getElementById("firstName").addEventListener("input", function (e) {
     let prenomSaisie = e.target.value; 
     
@@ -349,10 +406,10 @@ document.getElementById("firstName").addEventListener("input", function (e) {
     
 });
 
-
-// REGEX
+// REGEX POUR LA VALIDATION DE L'EMAIL
 
 let regexEmail = /.+@.+\..+/;
+let alerteMsgCourriel = false;
 
 const verifEmail = document.getElementById("email");
 
@@ -361,8 +418,128 @@ verifEmail.addEventListener("blur", function(e){
     let validiteCourriel = " ";
 
     if(!regexEmail.test(e.target.value)){
-        validiteCourriel = "votre email ne semble pas valide!"
+        validiteCourriel = "votre email ne semble pas valide!";
+        alerteMsgCourriel = true;
     }
 
     document.getElementById("emailErrorMsg").textContent = validiteCourriel;
 });
+
+
+// ENVOI DES DONNÉES À L'API PAR UNE REQUÊTE POST
+
+// function CALLBACK d'envoi des données du formulaire 
+
+// D'abord fonction createCommandePost qui va récupérer le tableau des produits commandés
+
+
+async function createCommandePost(){
+    let tableauCommandePost = await loadFinalTableau("http://localhost:3000/api/products");
+    console.log(tableauCommandePost);
+
+    return tableauCommandePost;
+
+    // cette fonction renvoie les produits commandés
+}
+
+
+function createClientPost(){
+
+    let prenomValide = false;
+    let nomValide = false;
+    let adresseValide = false;
+    let villeValide = false;
+    let emailValide = false;
+
+    if(document.getElementById("firstName").value !== "" && alerteMsgPrenom === false){
+        prenomValide = true;
+    }
+
+    if(document.getElementById("lastName").value !== "" && alerteMsgNom === false){
+        nomValide = true;
+    }
+
+    if(document.getElementById("address").value !== "" && alerteMsgAdresse === false){
+        adresseValide = true;
+    }
+
+    if(document.getElementById("city").value !== "" && alerteMsgVille === false){
+        villeValide = true;
+    }
+
+    if(document.getElementById("email").value !== "" && alerteMsgCourriel === false){
+        emailValide = true;
+    }
+
+    if(
+        prenomValide === true &&
+        nomValide === true &&
+        adresseValide === true &&
+        villeValide === true &&
+        emailValide === true
+    ){
+        // creation de l'objet contact
+        console.log("ca part");
+
+        const contact ={
+            firstName: document.getElementById("firstName").value,
+            lastName : document.getElementById("firstName").value,
+            address: document.getElementById("firstName").value,
+            city: document.getElementById("firstName").value,
+            email: document.getElementById("firstName").value
+        };
+
+        console.log(contact);
+
+        return contact;
+    
+        
+
+    }  // fin du if statement
+    
+}// fin de la fonction callback createClientPost
+
+// là on insert la fonction finale send(e)
+async function send(e){
+
+    e.preventDefault();
+
+    let objContactPost = createClientPost();
+
+    console.log(objContactPost);
+    
+    let tabCommandePost = createCommandePost();
+
+    console.log(tabCommandePost);
+
+    let {bodyContactObj, bodyCommandeTab} = await Promise.all({objContactPost, tabCommandePost});
+
+    fetch("http://localhost:3000/api/products/order", 
+    {
+        method: "POST",
+        headers: {
+                'Accept': 'application/json', 
+                'Content-Type': 'application/json'
+                },
+        body: JSON.stringify(
+            {
+                bodyContactObj, 
+                bodyCommandeTab
+            }
+        )
+    }
+        )
+        .then(function(res) {
+        if (res.ok) {
+        return res.json();
+        }
+        })
+        .then(function(value) {
+        console.log(value.postData.text);
+        });    
+}
+                
+
+document.getElementById("order").addEventListener("submit", send);
+        
+       
