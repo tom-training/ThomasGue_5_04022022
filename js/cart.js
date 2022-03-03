@@ -443,59 +443,61 @@ async function createCommandePost(){
 }
 
 
-function createClientPost(){
+async function createClientPost(){
 
-    let prenomValide = false;
-    let nomValide = false;
-    let adresseValide = false;
-    let villeValide = false;
-    let emailValide = false;
+    let formulaireFini = await loadFinalTableau("http://localhost:3000/api/products");
 
-    if(document.getElementById("firstName").value !== "" && alerteMsgPrenom === false){
-        prenomValide = true;
-    }
-
-    if(document.getElementById("lastName").value !== "" && alerteMsgNom === false){
-        nomValide = true;
-    }
-
-    if(document.getElementById("address").value !== "" && alerteMsgAdresse === false){
-        adresseValide = true;
-    }
-
-    if(document.getElementById("city").value !== "" && alerteMsgVille === false){
-        villeValide = true;
-    }
-
-    if(document.getElementById("email").value !== "" && alerteMsgCourriel === false){
-        emailValide = true;
-    }
-
-    if(
-        prenomValide === true &&
-        nomValide === true &&
-        adresseValide === true &&
-        villeValide === true &&
-        emailValide === true
-    ){
-        // creation de l'objet contact
-        console.log("ca part");
-
-        const contact ={
-            firstName: document.getElementById("firstName").value,
-            lastName : document.getElementById("firstName").value,
-            address: document.getElementById("firstName").value,
-            city: document.getElementById("firstName").value,
-            email: document.getElementById("firstName").value
-        };
-
-        console.log(contact);
-
-        return contact;
+    if(formulaireFini){
+        let prenomValide = false;
+        let nomValide = false;
+        let adresseValide = false;
+        let villeValide = false;
+        let emailValide = false;
     
+        if(document.getElementById("firstName").value !== "" && alerteMsgPrenom === false){
+            prenomValide = true;
+        }
+    
+        if(document.getElementById("lastName").value !== "" && alerteMsgNom === false){
+            nomValide = true;
+        }
+    
+        if(document.getElementById("address").value !== "" && alerteMsgAdresse === false){
+            adresseValide = true;
+        }
+    
+        if(document.getElementById("city").value !== "" && alerteMsgVille === false){
+            villeValide = true;
+        }
+    
+        if(document.getElementById("email").value !== "" && alerteMsgCourriel === false){
+            emailValide = true;
+        }
+    
+        if(
+            prenomValide === true &&
+            nomValide === true &&
+            adresseValide === true &&
+            villeValide === true &&
+            emailValide === true
+        ){
+            // creation de l'objet contact
+            console.log("ca part");
+    
+            const contact ={
+                firstName: document.getElementById("firstName").value,
+                lastName : document.getElementById("firstName").value,
+                address: document.getElementById("firstName").value,
+                city: document.getElementById("firstName").value,
+                email: document.getElementById("firstName").value
+            };
+    
+            console.log(contact);
+    
+            return contact;
         
-
-    }  // fin du if statement
+        }  // fin du if statement
+    }
     
 }// fin de la fonction callback createClientPost
 
