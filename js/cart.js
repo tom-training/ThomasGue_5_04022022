@@ -60,10 +60,6 @@ const loadListProduct = async function(urll){
     try{
             let listProduct = await loadAPI(urll);
 
-            listProduct.forEach(function(product) {
-            //console.log(product.name);
-            });
-
             let listProdCommandes= [];
 
             for(let element of monStockageJS){
@@ -312,6 +308,9 @@ async function loadFinalTableau(url){
 
         faireLeTotal();
 
+        return vaChercherTab;     // attention ce tableau n'est pas peut-être pas à jour des modifs et suppression eventuelles
+
+
     }catch(error){
         console.log(error);
     }
@@ -433,21 +432,37 @@ verifEmail.addEventListener("blur", function(e){
 // D'abord fonction createCommandePost qui va récupérer le tableau des produits commandés
 
 
-async function createCommandePost(){
-    let tableauCommandePost = await loadFinalTableau("http://localhost:3000/api/products");
-    console.log(tableauCommandePost);
+function createCommandePost(){
+    
+    console.log(monStockageJS);
 
-    return tableauCommandePost;
+    let product = [];
 
+    for(let canape of monStockageJS){
+        product.push(canape.idt);
+    }
+
+    return product;
     // cette fonction renvoie les produits commandés
 }
 
 
-async function createClientPost(){
 
-    let formulaireFini = await loadFinalTableau("http://localhost:3000/api/products");
+/*
+document.querySelector("form").addEventListener("submit", function(e){
 
-    if(formulaireFini){
+    e.preventDefault();
+    console.log("hello world");
+
+});
+*/
+
+
+function createClientPost(){
+
+    //let formulaireFini = await loadFinalTableau("http://localhost:3000/api/products");
+
+    if(monStockageJS){
         let prenomValide = false;
         let nomValide = false;
         let adresseValide = false;
@@ -486,10 +501,10 @@ async function createClientPost(){
     
             const contact ={
                 firstName: document.getElementById("firstName").value,
-                lastName : document.getElementById("firstName").value,
-                address: document.getElementById("firstName").value,
-                city: document.getElementById("firstName").value,
-                email: document.getElementById("firstName").value
+                lastName : document.getElementById("lastName").value,
+                address: document.getElementById("address").value,
+                city: document.getElementById("city").value,
+                email: document.getElementById("email").value
             };
     
             console.log(contact);
@@ -501,47 +516,85 @@ async function createClientPost(){
     
 }// fin de la fonction callback createClientPost
 
-// là on insert la fonction finale send(e)
-async function send(e){
-
-    e.preventDefault();
-
-    let objContactPost = createClientPost();
-
-    console.log(objContactPost);
+/*
+document.querySelector("form").addEventListener("submit", function(e){
     
-    let tabCommandePost = createCommandePost();
+        e.preventDefault();
+        const contact = createClientPost();
+        const product = createCommandePost();
 
-    console.log(tabCommandePost);
+        console.log(contact);
 
-    let {bodyContactObj, bodyCommandeTab} = await Promise.all({objContactPost, tabCommandePost});
+        const bodyPoste = JSON.stringify({contact, product});
 
-    fetch("http://localhost:3000/api/products/order", 
-    {
-        method: "POST",
-        headers: {
-                'Accept': 'application/json', 
-                'Content-Type': 'application/json'
-                },
-        body: JSON.stringify(
-            {
-                bodyContactObj, 
-                bodyCommandeTab
-            }
-        )
-    }
-        )
-        .then(function(res) {
-        if (res.ok) {
-        return res.json();
+        console.log(bodyPoste);
+
+        fetch("http://localhost:3000/api/products/order", 
+        {
+            method: "POST",
+            headers: {
+                    'Accept': 'application/json', 
+                    'Content-Type': 'application/json'
+                    },
+            body: JSON.stringify({contact, product})
         }
-        })
-        .then(function(value) {
-        console.log(value.postData.text);
-        });    
-}
-                
-
-document.getElementById("order").addEventListener("submit", send);
+            )
+            .then(function(response) {
+            if (response.ok) {
+                                return response.json();
+            }else{
+                            console.log("il n'y a pas de response?");
+            }
+            })
+            .then(function(data) {
+            console.log(data.orderId);
+            })
+            .catch(
+                function(error){
+                    console.log("problème avec fetch: " + error.message);
+                }
+            );
         
-       
+});
+
+*/
+
+
+
+function submitForm(e) {
+    e.preventDefault()
+    
+    const contact = createClientPost();
+    const products = createCommandePost();
+
+    console.log(contact);
+    console.log(products);
+
+    console.log(typeof(products[0]));
+
+    const bodyPost = {contact, products};
+
+    console.log(bodyPost);
+    //console.log(JSON.stringify(bodyPost));
+
+    fetch("http://localhost:3000/api/products/order", {
+        method: "POST",
+        body: JSON.stringify(bodyPost),
+        headers: {
+            'Accept': 'application/json', 
+            'Content-Type': 'application/json'
+        } 
+    }) 
+        .then((res) => res.json())
+        .then((data) => {
+            const orderId = data.orderId
+            console.log(orderId);
+            
+            //window.location.href = "./confirmation.html" + "?orderId=" + orderId
+          })
+        .catch((err) => console.error(err)) // afficher l'erreur si présente
+        //console.log(form.elements.value)
+} 
+
+
+document.querySelector("#order").addEventListener("click", function(e){submitForm(e)});
