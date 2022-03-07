@@ -585,16 +585,21 @@ function submitForm(e) {
             'Content-Type': 'application/json'
         } 
     }) 
-        .then((res) => res.json())
-        .then((data) => {
-            const orderId = data.orderId
+        .then(function(res){
+            if(res.ok){
+                return res.json();
+            }else{console.log("il y a un problème!");}
+        })
+        .then(function(data){
+            const orderId = data.orderId;
             console.log(orderId);
-            
-            //window.location.href = "./confirmation.html" + "?orderId=" + orderId
-          })
-        .catch((err) => console.error(err)) // afficher l'erreur si présente
-        //console.log(form.elements.value)
+            window.location.href = "./confirmation.html" + "?orderId=" + orderId
+        })
+        .catch(function(err){
+            console.error(err);
+        }); // afficher l'erreur si présente
+        
 } 
 
 
-document.querySelector("#order").addEventListener("click", function(e){submitForm(e)});
+document.querySelector("form").addEventListener("submit", function(e){submitForm(e)});
