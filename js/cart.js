@@ -115,6 +115,7 @@ function ajouterArticle(objKanap){
     articleElt.id = objKanap.idt;
     articleElt.setAttribute('data-id', objKanap.idt);
     articleElt.setAttribute('data-color', objKanap.couleur);
+    articleElt.classList.add('cart__item');
     
     const divImgElt = document.createElement("div");
     divImgElt.classList.add("cart__item__img");
@@ -176,13 +177,6 @@ function ajouterArticle(objKanap){
     deleteButtonElt.classList.add("deleteItem");
     divContentSettDeleteElt.appendChild(deleteButtonElt);
     
-    const breakElt = document.createElement("br");
-    articleElt.appendChild(breakElt);
-
-    const lineElt = document.createElement("hr");
-    articleElt.appendChild(lineElt);
-
-
     // il vaut raccorder l'article à son parent tout en dernier
     document.getElementById("cart__items").appendChild(articleElt);
 
