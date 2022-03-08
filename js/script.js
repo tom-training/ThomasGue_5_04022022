@@ -1,20 +1,11 @@
+// CE SCRIPT CONCERNE LA PAGE INDEX 
+// On va tout d'abord récupérer les données "canapé" à l'aide d'une fetch GET
 
-/* CE MORCEAU DE CODE DEVRA ETRE SUPPRIME
-
-window.addEventListener('load', function(){
-
-    console.log("page entierement chargée");
-});
-
-*/
-
-
-/* CE SCRIPT CONCERNE LA PAGE INDEX */
 
 fetch("http://localhost:3000/api/products")
   .then(function(res) {
     if (res.ok) {
-      return res.json();                  // que fait cette méthode?
+      return res.json();                  
     }
   })
   .then(function(value) {
@@ -23,18 +14,13 @@ fetch("http://localhost:3000/api/products")
     const tableauDeResultat = value;
 
     tableauDeResultat.forEach(element => {
-        console.log(element.colors);
-
         // On cree un lien <a> pour chaque article
 
         const lienProduit = document.createElement("a");
 
         document.getElementById('items').appendChild(lienProduit);
 
-        
-
-
-        // On cree un article pour chaque canapé
+        // On crée un article pour chaque canapé
         const articleCanape = document.createElement("article");
         
         lienProduit.appendChild(articleCanape);
@@ -67,10 +53,25 @@ fetch("http://localhost:3000/api/products")
 
   })
   .catch(function(err) {
-    console.log(err);
+    console.error(err);
+
+    const messageErreurDebut = document.createElement("p");
+    const messageErreurFin = document.createElement("p");
+    const breakElement = document.createElement("br");
+   
+    messageErreurDebut.textContent = "Il semblerait qu'un problème technique empêche le " + 
+    "chargement des informations concernant nos canapés, ";
+
+    messageErreurFin.textContent = "nous nous excusons pour ce désagrément," +
+    " veuillez réactualiser la page";
+
+    document.getElementById("items").appendChild(messageErreurDebut);
+    document.getElementById("items").appendChild(breakElement);
+    document.getElementById("items").appendChild(messageErreurFin);
+
   });
 
-/* FIN FIN FIN FIN FIN FIN -------CE SCRIPT CONCERNE LA PAGE INDEX  ----------- FIN FIN FIN FIN FIN*/
+/* FIN FIN FIN */
 
 
 
