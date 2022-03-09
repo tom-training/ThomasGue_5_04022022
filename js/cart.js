@@ -294,17 +294,14 @@ async function loadFinalTableau(url){
 
 loadFinalTableau("http://localhost:3000/api/products");
 
-
-// TEST A CE STADE    TEST A CE STADE       TEST A CE STADE     TEST A CE STADE 
-
-
-// Travail sur la validation des champs du formulaire
+// Travail sur la validation des champs du formulaire  - message: ENTREZ VOTRE PRENOM
 
 document.getElementById("firstName").addEventListener("focus", function () {
     document.getElementById("firstNameErrorMsg").textContent = "Entrez votre prénom";
 });
 
-// CONTRÔLE CHAMP PRENOM
+// CONTRÔLE CHAMP PRENOM avec une Regex pour vérifier qu'il n'y a pas de chiffre et au moins 
+// une lettre, autrement message: VEUILLEZ NOUS LAISSER VOTRE PRENOM
 
 let regexPrenom = /[a-zA-Z]+/;
 let alerteMsgPrenom = false;
@@ -322,7 +319,8 @@ document.getElementById("firstName").addEventListener("blur", function (e) {
 
 });
 
-// CONTRÔLE CHAMP NOM
+// CONTRÔLE CHAMP NOM avec une Regex pour vérifier qu'il n'y a pas de chiffre et au moins 
+// une lettre, autrement message: VEUILLEZ NOUS LAISSER VOTRE NOM DE FAMILLE
 
 let regexNom = /[a-zA-Z]+/;
 let alerteMsgNom = false;
@@ -340,7 +338,9 @@ document.getElementById("lastName").addEventListener("blur", function (e) {
 
 });
 
-// CONTRÔLE CHAMP ADRESSE
+// CONTRÔLE CHAMP ADRESSE avec une Regex pour vérifier qu'il n'y a au moins 
+// une lettre ou un chiffre, autrement message: VEUILLEZ INDIQUER VOTRE ADRESSE
+
 
 let regexAdresse = /[A-Za-z0-9]+/;
 let alerteMsgAdresse = false;
@@ -358,7 +358,8 @@ document.getElementById("address").addEventListener("blur", function (e) {
 
 });
 
-// CONTRÔLE CHAMP VILLE
+// CONTRÔLE CHAMP VILLE avec une Regex pour vérifier qu'il n'y a au moins 
+// une lettre ou un chiffre, autrement message: VEUILLEZ INDIQUER LA VILLE DE VOTRE ADRESSE
 
 let regexCity = /[a-zA-Z0-9]+/;
 let alerteMsgVille = false;
@@ -374,15 +375,6 @@ document.getElementById("city").addEventListener("blur", function (e) {
 
     document.getElementById("cityErrorMsg").textContent = validiteVille;
 
-});
-// Ce contrôle n'est PAS INDISPENSABLE
-
-document.getElementById("firstName").addEventListener("input", function (e) {
-    let prenomSaisie = e.target.value; 
-    
-    let aidePrenom = document.getElementById("firstNameErrorMsg");
-    aidePrenom.textContent = "vous avez tapé : " + prenomSaisie; 
-    
 });
 
 // REGEX POUR LA VALIDATION DE L'EMAIL
@@ -404,8 +396,10 @@ verifEmail.addEventListener("blur", function(e){
     document.getElementById("emailErrorMsg").textContent = validiteCourriel;
 });
 
+// FIN DES TESTS            FIN DES TESTS           FIN DES TESTS           FIN DES TESTS
 
-// ENVOI DES DONNÉES À L'API PAR UNE REQUÊTE POST
+// ENVOI DES DONNÉES À L'API PAR UNE REQUÊTE POST - on envoie un objet contact avec les
+// les champs du formulaire et un tableau d'identifiant (qui peut être récupéré du localStorage)
 
 // function CALLBACK d'envoi des données du formulaire 
 
@@ -426,21 +420,7 @@ function createCommandePost(){
     // cette fonction renvoie les produits commandés
 }
 
-
-
-/*
-document.querySelector("form").addEventListener("submit", function(e){
-
-    e.preventDefault();
-    console.log("hello world");
-
-});
-*/
-
-
 function createClientPost(){
-
-    //let formulaireFini = await loadFinalTableau("http://localhost:3000/api/products");
 
     if(monStockageJS){
         let prenomValide = false;
@@ -477,7 +457,6 @@ function createClientPost(){
             emailValide === true
         ){
             // creation de l'objet contact
-            console.log("ca part");
     
             const contact ={
                 firstName: document.getElementById("firstName").value,
@@ -487,8 +466,6 @@ function createClientPost(){
                 email: document.getElementById("email").value
             };
     
-            console.log(contact);
-    
             return contact;
         
         }  // fin du if statement
@@ -496,68 +473,17 @@ function createClientPost(){
     
 }// fin de la fonction callback createClientPost
 
-/*
-document.querySelector("form").addEventListener("submit", function(e){
-    
-        e.preventDefault();
-        const contact = createClientPost();
-        const product = createCommandePost();
-
-        console.log(contact);
-
-        const bodyPoste = JSON.stringify({contact, product});
-
-        console.log(bodyPoste);
-
-        fetch("http://localhost:3000/api/products/order", 
-        {
-            method: "POST",
-            headers: {
-                    'Accept': 'application/json', 
-                    'Content-Type': 'application/json'
-                    },
-            body: JSON.stringify({contact, product})
-        }
-            )
-            .then(function(response) {
-            if (response.ok) {
-                                return response.json();
-            }else{
-                            console.log("il n'y a pas de response?");
-            }
-            })
-            .then(function(data) {
-            console.log(data.orderId);
-            })
-            .catch(
-                function(error){
-                    console.log("problème avec fetch: " + error.message);
-                }
-            );
-        
-});
-
-*/
-
-
-
 function submitForm(e) {
+    
     e.preventDefault()
     
     const contact = createClientPost();
     const products = createCommandePost();
 
-    console.log(contact);
-    console.log(products);
-
-    console.log(typeof(products[0]));
-
     const bodyPost = {contact, products};
 
-    console.log(bodyPost);
-    //console.log(JSON.stringify(bodyPost));
-
     fetch("http://localhost:3000/api/products/order", {
+
         method: "POST",
         body: JSON.stringify(bodyPost),
         headers: {
@@ -580,6 +506,5 @@ function submitForm(e) {
         }); // afficher l'erreur si présente
         
 } 
-
 
 document.querySelector("form").addEventListener("submit", function(e){submitForm(e)});
