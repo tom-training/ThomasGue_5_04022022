@@ -1,59 +1,29 @@
 
 // Nous sommes sur la page panier
-
 // D'abord on récupère du localStorage : un tableau d'objet 
+// pour rappel il contient plusieurs objet avec element.idt/element.nombre/ element.couleur
 
-//console.log(localStorage);
-
-//console.log(localStorage.getItem("obj"));
 const monStockageJSON = localStorage.getItem("obj");
 const monStockageJS = JSON.parse(monStockageJSON);
 
-//console.log(monStockageJS);
+// 1ere fonction loadAPI qui retourne toute l'API sous la forme d'un objet
 
-// ensuite on a rédigé ici une fonction qui permet quand on l'appelle de récupérer 
-//toute les données de l'API
-
-function requeterAPI(url, tableauVide){
-
-    fetch(url)
-
-    .then(function(res){
-        if(res.ok){
-            return res.json();
-        }
-    })
-
-    .then(function(value){
-
-        tableauVide = value;
-        //console.log(tableauVide);
-        return tableauVide;
-    })
-    .catch(function(err){
-
-        return err;
-    });
-}
-
-const tableauDobjet = [];
-requeterAPI("http://localhost:3000/api/products", tableauDobjet);
-
-// INSERER UN TRY / CATCH   - DEMANDER A JORDAN   -- INSERER UN TRY / CATCH   - DEMANDER A JORDAN
 async function loadAPI(url){
 
-    try{
-        
+    try{        
             const response = await fetch(url);
-
-            //console.log(await response.json());
 
             return await response.json();
     
     }catch(error){
-            console.log(error);
+            console.error(error);
     }
 }
+
+// 2eme fonction loadListProduct qui récupère l'objet API et va boucler les canapés du localStorage
+// dessus, afin d'obtenir une liste de produits commandés listProdCommandes qui est un tableau qui
+// va avoir le même nombre d'objets que localStorage mais chaque canapés complétés des infos manquantes
+// (description, image, alt text, prix...)
 
 const loadListProduct = async function(urll){
 
@@ -63,20 +33,10 @@ const loadListProduct = async function(urll){
             let listProdCommandes= [];
 
             for(let element of monStockageJS){
-                
-                //console.log(element.idt);
 
                 for(let elt of listProduct){  // elt._id viennent de l'API donnant un tableau listProduct
 
                     if(element.idt === elt._id){  //element.idt vient du tableau monStockageJS
-
-                        //console.log(`c'est le produit ${elt.name} avec l'identifiant ${elt._id}`);
-
-                        // le code pour insérer le produit
-
-                        /* if structure, on boucle sur for(let el of listProdCommandes){
-
-                        } */
 
                         listProdCommandes.push(
                             {
@@ -97,17 +57,22 @@ const loadListProduct = async function(urll){
                     }
                 }
             }
-            //console.log(listProdCommandes);
             return listProdCommandes;
 
         }catch(error){
-            console.log(error);
+            console.error(error);
         }    
 };
 
+// cette fonction loadListProduct retourne un tableau listProdCommandes des produits commandés avec
+// toutes leurs caractéristiques
 
-loadListProduct("http://localhost:3000/api/products");
+//loadListProduct("http://localhost:3000/api/products");
 
+console.log(loadListProduct("http://localhost:3000/api/products"));
+
+// Ci-dessous on crée une fonction qui va ajouter tous les canapés issues du 
+// localStorage/listProdCommandes dans le DOM et donc les afficher à l'écran
 
 function ajouterArticle(objKanap){
 
@@ -177,10 +142,16 @@ function ajouterArticle(objKanap){
     deleteButtonElt.classList.add("deleteItem");
     divContentSettDeleteElt.appendChild(deleteButtonElt);
     
-    // il vaut raccorder l'article à son parent tout en dernier
+    // raccordement de l'article complet au code HTML
     document.getElementById("cart__items").appendChild(articleElt);
-
 } 
+
+// 3ème fonction qui va récupérer le tableau listProdCommandes
+// il va ensuite utiliser ce tableau pour:
+// 1> insérer les articles (photos et données des canapés) à l'écran,
+// 2> faire les totaux
+// 3> insérer des évenements écran: suppression 
+// 4> et modification des qtés
 
 async function loadFinalTableau(url){
 
@@ -188,70 +159,60 @@ async function loadFinalTableau(url){
 
         const vaChercherTab = await loadListProduct(url);
 
-        //console.log(vaChercherTab);
-
-        //ici je vais insérer ma fonction de création d'élément de DOM
+        // 1> ici je vais insérer ma fonction de création d'élément de DOM
 
         for (let kanap of vaChercherTab){
             ajouterArticle(kanap);
         }
-        // MA FONCTION TOTAL
-        //console.log(vaChercherTab);
-        // le code pour additionner le coût total
+        // 2> Ma fonction total
 
         function faireLeTotal(){
             let total = 0;
             let totalQuantity = 0; 
+
             for(let kanap of vaChercherTab){
-    
-                let leNombre = parseInt(kanap.nombre);
+                
+                let leNombre = parseInt(kanap.nombre);  // il faut convertir le string en number
                 total = total + leNombre * kanap.price;
                 totalQuantity = totalQuantity + leNombre;
             }
-            //console.log(total); 
-    
+            // de cette boucle complété on récupère les totaux total et totalQuantity
+                
             document.getElementById("totalPrice").textContent = total;
             document.getElementById("totalQuantity").textContent = totalQuantity;
         }
 
-        // Ci-dessous le code pour supprimmer (delete) les canapés
+        // 3> Ci-dessous le code pour supprimmer (delete) les canapés
 
         const lesBoutonsDelete = document.querySelectorAll(".deleteItem")
-        
+        // les boutons delete peuvent être nombreux, on boucle sur eux
         for (let elts of lesBoutonsDelete){
 
             elts.addEventListener("click", function(e){
 
-                //console.log(e.target.closest("article"));
-
-                //console.log(e.target.closest("article").dataset.id);
-
-                //console.log(e.target.closest("article").dataset.color);
-
                 // tu as récupéré l'identifiant et la couleur => tu supprimes dans le dataStorage
-
-                // tu supprimes dans le listProdCommandes
+                // et dans le DOM/sur l'écran
 
                 for(let i=0; i<monStockageJS.length; i++){
 
                     if(monStockageJS[i].idt === e.target.closest("article").dataset.id){
 
-                        // expulsion du i.idt du tableau d'objet
+                        // expulsion du i.idt du DOM
 
                         let articleToSuppress = document.getElementById(monStockageJS[i].idt);
-                        //console.log(articleToSuppress);
+                       
                         document.getElementById("cart__items").removeChild(articleToSuppress);
 
-                        monStockageJS.splice(i, 1);
-                        //console.log(monStockageJS.splice(i, 1));
 
+                        // expulsion du i.idt du tableau du localStorage
+                        monStockageJS.splice(i, 1);
+                        
                         // maintenant il faut transformer le localStorage
 
                         const monStokageJSON = JSON.stringify(monStockageJS);
                         
                         localStorage.setItem("obj", monStokageJSON);
                         
-                        //console.log(localStorage);
 
                     }else{
 
@@ -265,7 +226,7 @@ async function loadFinalTableau(url){
             });
         }
 
-        // ci-dessous le code pour modifier le nombre de canapés
+        // 4> ci-dessous le code pour modifier le nombre de canapés
 
         // on va utiliser l'élément de DOM suivant: input de type number "change"
 
@@ -274,8 +235,6 @@ async function loadFinalTableau(url){
         for(let elts of lesBoutonsModifs){
 
             elts.addEventListener("change", function(e){
-
-                //console.log(e.target.value);
 
                 let nouveauNombre = e.target.value;
 
@@ -288,8 +247,6 @@ async function loadFinalTableau(url){
                         monStokageJSON = JSON.stringify(monStockageJS);
                         
                         localStorage.setItem("obj", monStokageJSON);
-                        
-                        //console.log(localStorage);
         
                     }
                 }
@@ -302,11 +259,15 @@ async function loadFinalTableau(url){
 
         faireLeTotal();
 
-        return vaChercherTab;     // attention ce tableau n'est pas peut-être pas à jour des modifs et suppression eventuelles
+        return vaChercherTab;     
+        
+        // attention ce tableau vaChercherTab n'est pas peut-être pas à jour des 
+        // modifs et suppression eventuelles, peut- être vaut -il mieux sortir les EVENTS 
+        //de la fonction async
 
 
     }catch(error){
-        console.log(error);
+        console.error(error);
     }
 }
 
