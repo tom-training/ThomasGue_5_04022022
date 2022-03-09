@@ -178,9 +178,14 @@ document.getElementById("addToCart").addEventListener("click", function(){
 
                         
                     }else{
-                        console.log("non il n'y a pas eu de commande de canapé de ce type avant");
+                        console.log("non il n'y a pas eu de commande de canapé de ce type modèle/couleur avant");
                     }
                 }
+                // il ne faut pas oublier que la page produit ne contient qu'un seul canapé
+                // donc si il y a sélection d'un canapé même modèle/couleur, c'est fini 
+                // additionArticle = true; et donc le if ci-dessous n'opèrera pas
+                // s'il n'y a pas sélection d'un canapé même modèle/couleur alors additionArticle restera false
+                // et le if ci-dessous peut opérer
 
                 if(additionArticle === false){
                     monStockageJS.push( 
@@ -219,6 +224,9 @@ document.getElementById("addToCart").addEventListener("click", function(){
 
     }else{
         console.log("choisissez la couleur et le nombre!!!");
+        const messageErreur = document.createElement("p");
+        messageErreur.textContent = "Veuillez svp choisir une couleur et un nombre";
+        document.querySelector(".item__content").appendChild(messageErreur);
     }       
 
 });
