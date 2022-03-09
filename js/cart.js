@@ -150,8 +150,25 @@ function ajouterArticle(objKanap){
 // il va ensuite utiliser ce tableau pour:
 // 1> insérer les articles (photos et données des canapés) à l'écran,
 // 2> faire les totaux
-// 3> insérer des évenements écran: suppression 
-// 4> et modification des qtés
+
+
+// Je crée d'abord une fonction faireLeTotal
+
+function faireLeTotal(tableauDeKanap){
+    let total = 0;
+    let totalQuantity = 0; 
+
+    for(let kanap of tableauDeKanap){
+        
+        let leNombre = parseInt(kanap.nombre);  // il faut convertir le string en number
+        total = total + leNombre * kanap.price;
+        totalQuantity = totalQuantity + leNombre;
+    }
+    // de cette boucle complété on récupère les totaux total et totalQuantity
+        
+    document.getElementById("totalPrice").textContent = total;
+    document.getElementById("totalQuantity").textContent = totalQuantity;
+}
 
 async function loadFinalTableau(url){
 
@@ -166,32 +183,19 @@ async function loadFinalTableau(url){
         }
         // 2> Ma fonction total
 
-        function faireLeTotal(){
-            let total = 0;
-            let totalQuantity = 0; 
-
-            for(let kanap of vaChercherTab){
-                
-                let leNombre = parseInt(kanap.nombre);  // il faut convertir le string en number
-                total = total + leNombre * kanap.price;
-                totalQuantity = totalQuantity + leNombre;
-            }
-            // de cette boucle complété on récupère les totaux total et totalQuantity
-                
-            document.getElementById("totalPrice").textContent = total;
-            document.getElementById("totalQuantity").textContent = totalQuantity;
-        }
+        faireLeTotal(vaChercherTab);
 
         // 3> Ci-dessous le code pour supprimmer (delete) les canapés
+        // les boutons delete peuvent être nombreux, on boucle sur eux
 
         const lesBoutonsDelete = document.querySelectorAll(".deleteItem")
-        // les boutons delete peuvent être nombreux, on boucle sur eux
+
         for (let elts of lesBoutonsDelete){
 
             elts.addEventListener("click", function(e){
 
-                // tu as récupéré l'identifiant et la couleur => tu supprimes dans le dataStorage
-                // et dans le DOM/sur l'écran
+                // tu as récupéré l'identifiant et la couleur => tu supprimes dans le DOM/ecran puis 
+                // dans le vaChercherTab, puis à la fin dans le dataStorage
 
                 for(let i=0; i<monStockageJS.length; i++){
 
@@ -200,9 +204,16 @@ async function loadFinalTableau(url){
                         // expulsion du i.idt du DOM
 
                         let articleToSuppress = document.getElementById(monStockageJS[i].idt);
-                       
+                        
                         document.getElementById("cart__items").removeChild(articleToSuppress);
 
+                        // expulsion du j.idt du vaChercherTab
+                        for(let j=0; j<vaChercherTab.length; j++){
+
+                            if(vaChercherTab[j].idt === monStockageJS[i].idt){
+                                vaChercherTab.splice(j, 1);
+                            }
+                        }
 
                         // expulsion du i.idt du tableau du localStorage
                         monStockageJS.splice(i, 1);
@@ -221,7 +232,9 @@ async function loadFinalTableau(url){
                     }
                 }
 
-                faireLeTotal();
+                // l'Event click sur bouton supprimmer doit déclencher un recalcul
+                
+                faireLeTotal(vaChercherTab);
 
             });
         }
@@ -231,7 +244,7 @@ async function loadFinalTableau(url){
         // on va utiliser l'élément de DOM suivant: input de type number "change"
 
         const lesBoutonsModifs = document.querySelectorAll(".itemQuantity");
-        
+
         for(let elts of lesBoutonsModifs){
 
             elts.addEventListener("change", function(e){
@@ -241,29 +254,37 @@ async function loadFinalTableau(url){
                 for(let i=0; i<monStockageJS.length; i++){
 
                     if(monStockageJS[i].idt === e.target.closest("article").dataset.id){
-        
+
                         monStockageJS[i].nombre = nouveauNombre;
 
                         monStokageJSON = JSON.stringify(monStockageJS);
                         
                         localStorage.setItem("obj", monStokageJSON);
-        
+
+                        // on s'occupe maintenant de mettre à jour vaChercherTab
+                        for(let kanap of vaChercherTab){
+
+                            if(kanap.idt === monStockageJS[i].idt){
+                                kanap.nombre = nouveauNombre;
+                            }
+                        }
                     }
                 }
 
-                faireLeTotal();
+                // l'Event change sur le bouton modifier doit déclencher un recalcul
+                
+                faireLeTotal(vaChercherTab);
 
             });
-        
-        }
 
-        faireLeTotal();
+        }
 
         return vaChercherTab;     
         
-        // attention ce tableau vaChercherTab n'est pas peut-être pas à jour des 
-        // modifs et suppression eventuelles, peut- être vaut -il mieux sortir les EVENTS 
-        //de la fonction async
+        // le tableau vaChercherTab retourné ci-dessus est à jour des modifs et 
+        // suppression eventuelles, ces modifs et suppressions doivent être dans 
+        // cette fonction async car ils ont besoin de la création préalable du DOM
+        // par l'étape 1> appellant la fonction ajouterArticle
 
 
     }catch(error){
@@ -272,6 +293,10 @@ async function loadFinalTableau(url){
 }
 
 loadFinalTableau("http://localhost:3000/api/products");
+
+
+// TEST A CE STADE    TEST A CE STADE       TEST A CE STADE     TEST A CE STADE 
+
 
 // Travail sur la validation des champs du formulaire
 
