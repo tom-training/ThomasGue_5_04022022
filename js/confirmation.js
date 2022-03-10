@@ -1,4 +1,4 @@
-
+// window.location.href nous permet de récupérer l'URL
 
 var strg = window.location.href;
 
