@@ -14,7 +14,6 @@ dans l'URL */
 
 var identifiant = url.searchParams.get("id");
 
-
 /* On commence par un fetch qui sera une promise,
 
 quand on a récupéré les valeurs/variables de l'API
@@ -218,8 +217,7 @@ document.getElementById("addToCart").addEventListener("click", function(){
 
             // On le stocke dans localStorage
 
-            localStorage.setItem("obj", monPanierJSon);
-            
+            localStorage.setItem("obj", monPanierJSon);    
         }
 
     }else{

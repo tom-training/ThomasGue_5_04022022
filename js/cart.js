@@ -3,8 +3,8 @@
 // D'abord on récupère du localStorage : un tableau d'objet 
 // pour rappel il contient plusieurs objet avec element.idt/element.nombre/ element.couleur
 
-const monStockageJSON = localStorage.getItem("obj");
-const monStockageJS = JSON.parse(monStockageJSON);
+let monStockageJSON = localStorage.getItem("obj");
+let monStockageJS = JSON.parse(monStockageJSON);
 
 // 1ere fonction loadAPI qui retourne toute l'API sous la forme d'un objet
 
@@ -220,7 +220,7 @@ async function loadFinalTableau(url){
                         
                         // maintenant il faut transformer le localStorage
 
-                        const monStokageJSON = JSON.stringify(monStockageJS);
+                        let monStokageJSON = JSON.stringify(monStockageJS);
                         
                         localStorage.setItem("obj", monStokageJSON);
                         
@@ -480,31 +480,48 @@ function submitForm(e) {
     const contact = createClientPost();
     const products = createCommandePost();
 
-    const bodyPost = {contact, products};
+    console.log(contact);
+    console.log(products);
 
-    fetch("http://localhost:3000/api/products/order", {
+    if(products.length>0){
+        const bodyPost = {contact, products};
 
-        method: "POST",
-        body: JSON.stringify(bodyPost),
-        headers: {
-            'Accept': 'application/json', 
-            'Content-Type': 'application/json'
-        } 
-    }) 
-        .then(function(res){
-            if(res.ok){
-                return res.json();
-            }else{console.log("il y a un problème!");}
-        })
-        .then(function(data){
-            const orderId = data.orderId;
-            console.log(orderId);
-            window.location.href = "./confirmation.html" + "?orderId=" + orderId
-        })
-        .catch(function(err){
-            console.error(err);
-        }); // afficher l'erreur si présente
+        fetch("http://localhost:3000/api/products/order", {
+    
+            method: "POST",
+            body: JSON.stringify(bodyPost),
+            headers: {
+                'Accept': 'application/json', 
+                'Content-Type': 'application/json'
+            } 
+        }) 
+            .then(function(res){
+                if(res.ok){
+                    return res.json();
+                }else{
+                    console.log("il y a un problème!");
+                }
+            })
+            .then(function(data){
+                const orderId = data.orderId;
+                console.log(orderId);
+                window.location.href = "./confirmation.html" + "?orderId=" + orderId;
+            })
+            .catch(function(err){
+                console.error(err);
+                const messageErrorLoad = "Il semble y avoir un problème pour récupérer les données de votre commande";
+                const messageErrorLoadElt = document.createElement('p');
+                messageErrorLoadElt.textContent = messageErrorLoad;
+                document.querySelector('.cart').appendChild(messageErrorLoadElt);
+            }); // afficher l'erreur si présente
+    }else{
         
+        const message = "Veuillez sélectionner au moins un article";
+        const messageElt = document.createElement('p');
+        messageElt.textContent = message;
+        document.querySelector('.cart').appendChild(messageElt);
+    }     
 } 
 
 document.querySelector("form").addEventListener("submit", function(e){submitForm(e)});
+

@@ -15,3 +15,17 @@ var identifiantOrder = url.searchParams.get("orderId");
 console.log(identifiantOrder);
 
 document.getElementById("orderId").textContent = identifiantOrder;
+
+
+let monStockageJSON = localStorage.getItem("obj");
+let monStockageJS = JSON.parse(monStockageJSON);
+
+console.log(monStockageJS);
+
+monStockageJS = [];
+
+monStockageJSON = JSON.stringify(monStockageJS);
+
+localStorage.setItem("obj", monStockageJSON);
+
+console.log(localStorage);
