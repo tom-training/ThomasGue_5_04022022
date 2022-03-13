@@ -77,7 +77,7 @@ console.log(loadListProduct("http://localhost:3000/api/products"));
 function ajouterArticle(objKanap){
 
     const articleElt = document.createElement("article");
-    articleElt.id = objKanap.idt;
+    articleElt.classList.add(objKanap.idt);
     articleElt.setAttribute('data-id', objKanap.idt);
     articleElt.setAttribute('data-color', objKanap.couleur);
     articleElt.classList.add('cart__item');
@@ -197,33 +197,43 @@ async function loadFinalTableau(url){
                 // tu as récupéré l'identifiant et la couleur => tu supprimes dans le DOM/ecran puis 
                 // dans le vaChercherTab, puis à la fin dans le dataStorage
 
-                for(let i=0; i<monStockageJS.length; i++){
+                for(let i=0; i<vaChercherTab.length; i++){
 
-                    if(monStockageJS[i].idt === e.target.closest("article").dataset.id){
+                    if(vaChercherTab[i].idt === e.target.closest("article").dataset.id &&
+                       vaChercherTab[i].couleur === e.target.closest("article").dataset.color){
 
                         // expulsion du i.idt du DOM
-
-                        let articleToSuppress = document.getElementById(monStockageJS[i].idt);
                         
+                        // il faut établir articleToSuppress
+
+                        let articleToSuppress = e.target.closest("article");
+                        console.log(articleToSuppress);
+
+
                         document.getElementById("cart__items").removeChild(articleToSuppress);
 
-                        // expulsion du j.idt du vaChercherTab
-                        for(let j=0; j<vaChercherTab.length; j++){
+                        // expulsion du i.idt du tableau du localStorage
+                        for(let j=0; j<monStockageJS.length; j++){
 
-                            if(vaChercherTab[j].idt === monStockageJS[i].idt){
-                                vaChercherTab.splice(j, 1);
+                            if(vaChercherTab[i].idt === monStockageJS[j].idt &&
+                               vaChercherTab[i].couleur === monStockageJS[j].couleur){
+                                
+                                monStockageJS.splice(j, 1);
+                            
                             }
                         }
 
-                        // expulsion du i.idt du tableau du localStorage
-                        monStockageJS.splice(i, 1);
-                        
+
                         // maintenant il faut transformer le localStorage
 
                         let monStokageJSON = JSON.stringify(monStockageJS);
-                        
+                                                
                         localStorage.setItem("obj", monStokageJSON);
                         
+                        
+                        // expulsion du j.idt du vaChercherTab
+
+                        vaChercherTab.splice(i, 1);
 
                     }else{
 
@@ -237,6 +247,8 @@ async function loadFinalTableau(url){
                 faireLeTotal(vaChercherTab);
 
             });
+
+           
         }
 
         // 4> ci-dessous le code pour modifier le nombre de canapés
@@ -245,15 +257,19 @@ async function loadFinalTableau(url){
 
         const lesBoutonsModifs = document.querySelectorAll(".itemQuantity");
 
-        for(let elts of lesBoutonsModifs){
+        for(let eltns of lesBoutonsModifs){
 
-            elts.addEventListener("change", function(e){
+            eltns.addEventListener("change", function(e){
 
                 let nouveauNombre = e.target.value;
 
+                console.log(e.target.closest("article").dataset.id);
+                console.log(e.target.closest("article").dataset.color);
+
                 for(let i=0; i<monStockageJS.length; i++){
 
-                    if(monStockageJS[i].idt === e.target.closest("article").dataset.id){
+                    if(monStockageJS[i].idt === e.target.closest("article").dataset.id &&
+                       monStockageJS[i].couleur === e.target.closest("article").dataset.color){
 
                         monStockageJS[i].nombre = nouveauNombre;
 
@@ -264,7 +280,9 @@ async function loadFinalTableau(url){
                         // on s'occupe maintenant de mettre à jour vaChercherTab
                         for(let kanap of vaChercherTab){
 
-                            if(kanap.idt === monStockageJS[i].idt){
+                            if(kanap.idt === monStockageJS[i].idt &&
+                               kanap.couleur === monStockageJS[i].color){
+
                                 kanap.nombre = nouveauNombre;
                             }
                         }
@@ -272,11 +290,16 @@ async function loadFinalTableau(url){
                 }
 
                 // l'Event change sur le bouton modifier doit déclencher un recalcul
-                
+                location.reload();
                 faireLeTotal(vaChercherTab);
+                
 
             });
-
+            /*
+            eltns.addEventListener("input", function(){
+                faireLeTotal(vaChercherTab);
+            });
+            */
         }
 
         return vaChercherTab;     
