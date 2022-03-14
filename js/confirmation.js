@@ -12,20 +12,34 @@ dans l'URL */
 
 var identifiantOrder = url.searchParams.get("orderId");
 
+if (identifiantOrder === null){
+    window.location.href = "./index.html";
+}
+
 console.log(identifiantOrder);
 
 document.getElementById("orderId").textContent = identifiantOrder;
 
+function viderLocalStorage(){
 
-let monStockageJSON = localStorage.getItem("obj");
-let monStockageJS = JSON.parse(monStockageJSON);
+    let monStockageJSON = localStorage.getItem("obj");
+    let monStockageJS = JSON.parse(monStockageJSON);
+    
+    console.log(monStockageJS);
+    
+    monStockageJS = [];
+    
+    monStockageJSON = JSON.stringify(monStockageJS);
+    
+    localStorage.setItem("obj", monStockageJSON);
+    
+    console.log(localStorage);
+    
+    return localStorage;
+}
 
-console.log(monStockageJS);
+viderLocalStorage();
 
-monStockageJS = [];
+//window.addEventListener("hashchange", function(){viderLocalStorage});
 
-monStockageJSON = JSON.stringify(monStockageJS);
 
-localStorage.setItem("obj", monStockageJSON);
-
-console.log(localStorage);
